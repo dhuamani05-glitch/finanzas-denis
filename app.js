@@ -82,11 +82,18 @@ const App = {
         // Export CSV
         document.getElementById('btn-export-csv').addEventListener('click', () => this.exportCSV());
 
+        // Theme toggle button
+        document.getElementById('btn-toggle-theme').addEventListener('click', () => this.toggleTheme());
+
         // Settings
         document.getElementById('btn-settings').addEventListener('click', () => this.openModal('modal-settings'));
         document.getElementById('setting-currency').addEventListener('change', (e) => {
             Storage.saveSetting('currency', e.target.value);
             this.render();
+        });
+        document.getElementById('setting-theme').addEventListener('change', (e) => {
+            Storage.saveSetting('theme', e.target.value);
+            this.applyTheme(e.target.value);
         });
         document.getElementById('btn-clear-data').addEventListener('click', () => this.clearAllData());
 
@@ -147,6 +154,7 @@ const App = {
         // Render charts
         if (typeof Charts !== 'undefined') {
             Charts.renderCategoryChart(this.currentYear, this.currentMonth);
+            Charts.renderIncomeCategoryChart(this.currentYear, this.currentMonth);
             Charts.renderTrendChart();
         }
     },
@@ -435,22 +443,23 @@ const App = {
 
     // ===== Reports =====
     renderReports() {
-        this.renderCategorySummary();
+        this.renderCategorySummary('expense', 'category-summary', 'Sin gastos este mes');
+        this.renderCategorySummary('income', 'income-category-summary', 'Sin ingresos este mes');
         if (typeof Charts !== 'undefined') {
             Charts.renderComparisonChart();
         }
     },
 
-    renderCategorySummary() {
-        const container = document.getElementById('category-summary');
-        const catTotals = Storage.getCategoryTotals(this.currentYear, this.currentMonth, 'expense');
+    renderCategorySummary(type, containerId, emptyMsg) {
+        const container = document.getElementById(containerId);
+        const catTotals = Storage.getCategoryTotals(this.currentYear, this.currentMonth, type);
         const currency = Storage.getSettings().currency;
         const colors = Charts ? Charts.COLORS : [];
 
         const sorted = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
 
         if (sorted.length === 0) {
-            container.innerHTML = '<p class="empty-state">Sin gastos este mes</p>';
+            container.innerHTML = `<p class="empty-state">${emptyMsg}</p>`;
             return;
         }
 
@@ -460,7 +469,7 @@ const App = {
                     <span class="cat-dot" style="background:${colors[i % colors.length] || '#4361ee'}"></span>
                     <span>${cat}</span>
                 </div>
-                <span class="cat-amount">${this.formatMoney(amount, currency)}</span>
+                <span class="cat-amount ${type}">${this.formatMoney(amount, currency)}</span>
             </div>
         `).join('');
     },
@@ -491,6 +500,37 @@ const App = {
     loadSettings() {
         const settings = Storage.getSettings();
         document.getElementById('setting-currency').value = settings.currency;
+        document.getElementById('setting-theme').value = settings.theme || 'dark';
+        this.applyTheme(settings.theme || 'dark');
+    },
+
+    // ===== Theme =====
+    toggleTheme() {
+        const settings = Storage.getSettings();
+        const newTheme = settings.theme === 'dark' ? 'light' : 'dark';
+        Storage.saveSetting('theme', newTheme);
+        this.applyTheme(newTheme);
+        document.getElementById('setting-theme').value = newTheme;
+    },
+
+    applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        // Update theme icons
+        const darkIcon = document.getElementById('theme-icon-dark');
+        const lightIcon = document.getElementById('theme-icon-light');
+        if (theme === 'light') {
+            darkIcon.classList.add('hidden');
+            lightIcon.classList.remove('hidden');
+            document.querySelector('meta[name="theme-color"]').content = '#f0f2f5';
+        } else {
+            darkIcon.classList.remove('hidden');
+            lightIcon.classList.add('hidden');
+            document.querySelector('meta[name="theme-color"]').content = '#1a1a2e';
+        }
+        // Update chart colors if Charts exists
+        if (typeof Charts !== 'undefined' && Charts.updateThemeColors) {
+            Charts.updateThemeColors(theme);
+        }
     },
 
     clearAllData() {
@@ -526,7 +566,7 @@ const App = {
     },
 
     // ===== Helpers =====
-    formatMoney(amount, currency = '$') {
+    formatMoney(amount, currency = 'S/. ') {
         const num = Math.abs(Number(amount));
         return `${currency}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
