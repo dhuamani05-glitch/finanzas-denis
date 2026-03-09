@@ -2,13 +2,13 @@ const CACHE_NAME = 'finanzas-denis-v1';
 const ASSETS = [
     './',
     './index.html',
-    './css/styles.css',
-    './js/storage.js',
-    './js/app.js',
-    './js/charts.js',
+    './styles.css',
+    './storage.js',
+    './app.js',
+    './charts.js',
     './manifest.json',
-    './icons/icon-192.png',
-    './icons/icon-512.png'
+    './icon-192.png',
+    './icon-512.png'
 ];
 
 // Install - cache assets
