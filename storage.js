@@ -71,7 +71,7 @@ const Storage = {
 
     // ===== Autenticacion =====
     getAuth() {
-        try { return JSON.parse(localStorage.getItem(this.KEYS.AUTH)) || null; }
+        try { return JSON.parse(localStorage.getItem(this.KEYS.AUTH)) || {enabled:false,pin:null,salt:null,biometric:false,securityQuestion:null,securityAnswer:null}; }
         catch { return null; }
     },
 
