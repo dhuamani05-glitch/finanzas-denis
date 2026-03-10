@@ -521,6 +521,7 @@ const App = {
     clearAllData(){if(confirm('¿Eliminar TODOS los datos? Esta acción no se puede deshacer.')){Storage.clearAll();this.showToast('Datos eliminados');this.render();this.renderBudgets();}},
     openModal(id){const m=document.getElementById(id);if(m){m.classList.remove('hidden');m.classList.add('active');}},
     closeModal(id){const m=document.getElementById(id);if(m){m.classList.remove('active');m.classList.add('hidden');}},
+    closeAllModals(){document.querySelectorAll('.modal').forEach(m=>{m.classList.remove('active');m.classList.add('hidden');});},
     showToast(msg,type='success'){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}t.textContent=msg;t.className='toast '+type+' show';setTimeout(()=>t.classList.remove('show'),2500);},
     formatMoney(n){const s=Storage.getSettings();return s.currency+Number(n).toFixed(2);}
 };
