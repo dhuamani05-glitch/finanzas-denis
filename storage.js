@@ -193,7 +193,7 @@ const Storage = {
             let status = 'safe';
             if (percentage >= 100) status = 'danger';
             else if (percentage >= 80) status = 'warning';
-            return { ...b, spent, percentage, status };
+            const remaining = b.amount - spent; return { ...b, spent, remaining, percentage, status };
         });
     },
 
