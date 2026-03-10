@@ -519,8 +519,8 @@ const App = {
     handleBioToggle(enabled){const auth=Storage.getAuth();auth.biometric=enabled;Storage.saveAuth(auth);this.showToast(enabled?'Biometría activada':'Biometría desactivada');},
     handleSecurityQSubmit(e){e.preventDefault();const q=document.getElementById('security-question').value;const a=document.getElementById('security-answer').value.trim();if(!a){this.showToast('Ingresa una respuesta','error');return;}const auth=Storage.getAuth();auth.securityQuestion=q;auth.securityAnswer=a.toLowerCase();Storage.saveAuth(auth);this.closeModal('modal-security-q');this.showToast('Pregunta de seguridad guardada');},
     clearAllData(){if(confirm('¿Eliminar TODOS los datos? Esta acción no se puede deshacer.')){Storage.clearAll();this.showToast('Datos eliminados');this.render();this.renderBudgets();}},
-    openModal(id){document.getElementById(id)?.classList.add('active');},
-    closeModal(id){document.getElementById(id)?.classList.remove('active');},
+    openModal(id){const m=document.getElementById(id);if(m){m.classList.remove('hidden');m.classList.add('active');}},
+    closeModal(id){const m=document.getElementById(id);if(m){m.classList.remove('active');m.classList.add('hidden');}},
     showToast(msg,type='success'){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}t.textContent=msg;t.className='toast '+type+' show';setTimeout(()=>t.classList.remove('show'),2500);},
     formatMoney(n){const s=Storage.getSettings();return s.currency+Number(n).toFixed(2);}
 };
