@@ -209,7 +209,7 @@ const App = {
 
         // Categories
         document.getElementById('btn-manage-categories').addEventListener('click', () => {
-            this.closeAllModals();
+            this.closeModal('modal-settings');
             this.renderCategoryList();
             this.openModal('modal-categories');
         });
