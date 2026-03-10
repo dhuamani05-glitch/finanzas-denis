@@ -1,59 +1,57 @@
-const CACHE_NAME = 'finanzas-denis-v1';
+const CACHE_NAME = 'finanzas-denis-v2';
 const ASSETS = [
-    './',
-    './index.html',
-    './styles.css',
-    './storage.js',
-    './app.js',
-    './charts.js',
-    './manifest.json',
-    './icon-192.png',
-    './icon-512.png'
+  './',
+  'index.html',
+  'styles.css',
+  'app.js',
+  'storage.js',
+  'charts.js',
+  'manifest.json',
+  'icon-192.png',
+  'icon-512.png'
 ];
 
-// Install - cache assets
-self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(ASSETS))
-            .then(() => self.skipWaiting())
-    );
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
+  );
 });
 
-// Activate - clean old caches
-self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(keys =>
-            Promise.all(
-                keys.filter(key => key !== CACHE_NAME)
-                    .map(key => caches.delete(key))
-            )
-        ).then(() => self.clients.claim())
-    );
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
 });
 
-// Fetch - serve from cache, fallback to network
-self.addEventListener('fetch', event => {
-    // Skip non-GET requests
-    if (event.request.method !== 'GET') return;
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  const url = new URL(e.request.url);
 
-    // For CDN resources (Chart.js), try network first
-    if (event.request.url.includes('cdn.jsdelivr.net')) {
-        event.respondWith(
-            fetch(event.request)
-                .then(response => {
-                    const clone = response.clone();
-                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-                    return response;
-                })
-                .catch(() => caches.match(event.request))
-        );
-        return;
-    }
-
-    // For local assets, cache first
-    event.respondWith(
-        caches.match(event.request)
-            .then(cached => cached || fetch(event.request))
+  // Network-first for app files (JS, CSS, HTML) to always get latest
+  if (url.origin === location.origin && (url.pathname.endsWith('.js') || url.pathname.endsWith('.css') || url.pathname.endsWith('.html') || url.pathname.endsWith('/'))) {
+    e.respondWith(
+      fetch(e.request).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        return res;
+      }).catch(() => caches.match(e.request))
     );
+    return;
+  }
+
+  // Cache-first for static assets (images, manifest, CDN)
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        return res;
+      });
+    })
+  );
 });
