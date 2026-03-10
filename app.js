@@ -435,7 +435,7 @@ const App = {
         const balanceEl = document.getElementById('balance-total');
         balanceEl.style.color = totals.balance >= 0 ? 'var(--income)' : 'var(--expense)';
         this.renderRecentTransactions();
-        this.renderBudgetAlerts();
+        
         if (typeof Charts !== 'undefined') {
             Charts.renderCategoryChart(this.currentYear, this.currentMonth);
             Charts.renderIncomeCategoryChart(this.currentYear, this.currentMonth);
