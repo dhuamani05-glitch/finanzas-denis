@@ -1,276 +1,458 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Finanzas Denis">
-    <meta name="theme-color" content="#1a1a2e">
-    <meta name="description" content="App de finanzas personales de Denis">
     <title>Finanzas Denis</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="icon" type="image/svg+xml" href="icon.svg">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- LOCK SCREEN -->
+    <div id="lock-screen" class="lock-screen hidden">
+        <div class="lock-content">
+            <div class="lock-icon">&#128274;</div>
+            <h2 id="lock-title">Ingresa tu PIN</h2>
+            <div class="pin-dots" id="pin-dots">
+                <span class="pin-dot"></span><span class="pin-dot"></span>
+                <span class="pin-dot"></span><span class="pin-dot"></span>
+            </div>
+            <p id="lock-error" class="lock-error hidden">PIN incorrecto</p>
+            <div class="pin-pad">
+                <button class="pin-key" data-digit="1">1</button>
+                <button class="pin-key" data-digit="2">2</button>
+                <button class="pin-key" data-digit="3">3</button>
+                <button class="pin-key" data-digit="4">4</button>
+                <button class="pin-key" data-digit="5">5</button>
+                <button class="pin-key" data-digit="6">6</button>
+                <button class="pin-key" data-digit="7">7</button>
+                <button class="pin-key" data-digit="8">8</button>
+                <button class="pin-key" data-digit="9">9</button>
+                <button class="pin-key pin-key-bio" id="btn-biometric">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 015 5v3a5 5 0 01-10 0V7a5 5 0 015-5z"/><path d="M3 12a9 9 0 0018 0"/><path d="M12 19v3"/></svg>
+                </button>
+                <button class="pin-key" data-digit="0">0</button>
+                <button class="pin-key pin-key-del" id="btn-pin-delete">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 4H8l-7 8 7 8h13a2 2 0 002-2V6a2 2 0 00-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+                </button>
+            </div>
+            <button id="btn-forgot-pin" class="btn-forgot">Olvide mi PIN</button>
+        </div>
+    </div>
+
+    <!-- SPLASH -->
     <div id="splash" class="splash">
         <div class="splash-content">
             <div class="splash-icon">&#128176;</div>
             <h1>Finanzas Denis</h1>
-            <p>Cargando...</p>
+            <p>Tu asistente financiero personal</p>
         </div>
     </div>
+
+    <!-- APP -->
     <div id="app" class="app hidden">
         <header class="header">
             <h1 id="header-title">Dashboard</h1>
             <div class="header-actions">
-                <button id="btn-toggle-theme" class="btn-icon" aria-label="Cambiar tema">
-                    <svg id="theme-icon-dark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-                    <svg id="theme-icon-light" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <button class="btn-icon" id="btn-toggle-theme" aria-label="Cambiar tema">
+                    <svg id="theme-icon-dark" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg id="theme-icon-light" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
                 </button>
-                <button id="btn-settings" class="btn-icon" aria-label="Configuracion">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                <button class="btn-icon" id="btn-settings" aria-label="Configuracion">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
                 </button>
             </div>
         </header>
+
         <main class="main-content">
-            <section id="page-dashboard" class="page active">
+            <!-- DASHBOARD -->
+            <div id="page-dashboard" class="page active">
                 <div class="balance-card">
-                    <span class="balance-label">Balance Total</span>
-                    <h2 id="balance-total" class="balance-amount">$0.00</h2>
+                    <div class="balance-label">BALANCE TOTAL</div>
+                    <div class="balance-amount" id="balance-total">S/. 0.00</div>
                     <div class="balance-row">
                         <div class="balance-item income">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-                            <div><span>Ingresos</span><strong id="total-income">$0.00</strong></div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                            <div><span>Ingresos</span><strong id="total-income">S/. 0.00</strong></div>
                         </div>
                         <div class="balance-item expense">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-                            <div><span>Gastos</span><strong id="total-expense">$0.00</strong></div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                            <div><span>Gastos</span><strong id="total-expense">S/. 0.00</strong></div>
                         </div>
                     </div>
                 </div>
+
                 <div class="month-filter">
                     <button id="btn-prev-month" class="btn-month-nav">&lt;</button>
                     <span id="current-month-label">Marzo 2026</span>
                     <button id="btn-next-month" class="btn-month-nav">&gt;</button>
                 </div>
+
                 <div class="chart-card">
                     <h3>Gastos por Categoria</h3>
-                    <div class="chart-container"><canvas id="chart-categories"></canvas></div>
-                    <p id="chart-empty" class="chart-empty hidden">Sin datos para mostrar</p>
+                    <div class="chart-container">
+                        <canvas id="chart-categories"></canvas>
+                        <p id="chart-empty" class="chart-empty hidden">Sin gastos este mes</p>
+                    </div>
                 </div>
+
                 <div class="chart-card">
                     <h3>Ingresos por Categoria</h3>
-                    <div class="chart-container"><canvas id="chart-income-categories"></canvas></div>
-                    <p id="chart-income-empty" class="chart-empty hidden">Sin datos para mostrar</p>
+                    <div class="chart-container">
+                        <canvas id="chart-income-categories"></canvas>
+                        <p id="chart-income-empty" class="chart-empty hidden">Sin ingresos este mes</p>
+                    </div>
                 </div>
-                <div class="chart-card">
-                    <h3>Tendencia Mensual</h3>
-                    <div class="chart-container"><canvas id="chart-trend"></canvas></div>
+
+                <div id="budget-alerts" class="section-card hidden">
+                    <h3>&#9888; Alertas de Presupuesto</h3>
+                    <div id="alerts-list"></div>
                 </div>
+
                 <div class="section-card">
                     <div class="section-header">
                         <h3>Ultimas Transacciones</h3>
                         <button id="btn-see-all" class="btn-link">Ver todas</button>
                     </div>
-                    <div id="recent-transactions" class="transactions-list">
-                        <p class="empty-state">No hay transacciones registradas</p>
+                    <div id="recent-transactions" class="transactions-list"></div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Tendencia Mensual</h3>
+                    <div class="chart-container chart-container-lg">
+                        <canvas id="chart-trend"></canvas>
                     </div>
                 </div>
-                <div id="budget-alerts" class="section-card hidden">
-                    <h3>Alertas de Presupuesto</h3>
-                    <div id="alerts-list"></div>
-                </div>
-            </section>
-            <section id="page-transactions" class="page">
+            </div>
+
+            <!-- TRANSACTIONS PAGE -->
+            <div id="page-transactions" class="page">
                 <div class="transactions-header">
                     <div class="filter-tabs">
-                        <button class="filter-tab active" data-filter="all">Todas</button>
+                        <button class="filter-tab active" data-filter="all">Todos</button>
                         <button class="filter-tab" data-filter="income">Ingresos</button>
                         <button class="filter-tab" data-filter="expense">Gastos</button>
                     </div>
                 </div>
-                <div id="all-transactions" class="transactions-list">
-                    <p class="empty-state">No hay transacciones registradas</p>
-                </div>
-            </section>
-            <section id="page-budgets" class="page">
+                <div id="all-transactions" class="transactions-list"></div>
+            </div>
+
+            <!-- BUDGETS PAGE -->
+            <div id="page-budgets" class="page">
                 <button id="btn-add-budget" class="btn-primary btn-full">+ Nuevo Presupuesto</button>
-                <div id="budgets-list" class="budgets-container">
-                    <p class="empty-state">No hay presupuestos definidos</p>
-                </div>
-            </section>
-            <section id="page-reports" class="page">
+                <div id="budgets-list" class="budgets-container"></div>
+            </div>
+
+            <!-- REPORTS PAGE -->
+            <div id="page-reports" class="page">
                 <div class="report-actions">
                     <button id="btn-export-csv" class="btn-secondary btn-full">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         Exportar CSV
                     </button>
                 </div>
-                <div class="chart-card">
-                    <h3>Gastos por Categoria</h3>
+                <div class="section-card">
+                    <h3>Resumen Gastos</h3>
                     <div id="category-summary"></div>
                 </div>
-                <div class="chart-card">
-                    <h3>Ingresos por Categoria</h3>
+                <div class="section-card">
+                    <h3>Resumen Ingresos</h3>
                     <div id="income-category-summary"></div>
                 </div>
                 <div class="chart-card">
                     <h3>Comparativa Mensual</h3>
-                    <div class="chart-container chart-container-lg"><canvas id="chart-comparison"></canvas></div>
+                    <div class="chart-container chart-container-lg">
+                        <canvas id="chart-comparison"></canvas>
+                    </div>
                 </div>
-            </section>
+            </div>
         </main>
+
+        <!-- FAB -->
         <button id="fab-add" class="fab" aria-label="Agregar transaccion">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
+
+        <!-- BOTTOM NAV -->
         <nav class="bottom-nav">
             <button class="nav-item active" data-page="dashboard">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
                 <span>Inicio</span>
             </button>
             <button class="nav-item" data-page="transactions">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/></svg>
                 <span>Movimientos</span>
             </button>
             <button class="nav-item" data-page="budgets">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M9 12h6M12 9v6"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span>Presupuestos</span>
             </button>
             <button class="nav-item" data-page="reports">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                 <span>Reportes</span>
             </button>
         </nav>
-    </div>
-    <div id="modal-transaction" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-trans-title">Nueva Transaccion</h2>
-                <button class="btn-close-modal">&times;</button>
-            </div>
-            <form id="form-transaction">
-                <input type="hidden" id="trans-id" value="">
-                <div class="form-group">
-                    <label>Tipo</label>
-                    <div class="toggle-group">
-                        <button type="button" class="toggle-btn active" data-type="expense">Gasto</button>
-                        <button type="button" class="toggle-btn" data-type="income">Ingreso</button>
-                    </div>
+
+        <!-- MODAL: TRANSACTION -->
+        <div id="modal-transaction" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-trans-title">Nueva Transaccion</h2>
+                    <button class="btn-close-modal">&times;</button>
+                </div>
+                <form id="form-transaction">
+                    <input type="hidden" id="trans-id">
                     <input type="hidden" id="trans-type" value="expense">
-                </div>
-                <div class="form-group">
-                    <label for="trans-amount">Monto</label>
-                    <input type="number" id="trans-amount" step="0.01" min="0.01" placeholder="0.00" required inputmode="decimal">
-                </div>
-                <div class="form-group">
-                    <label for="trans-category">Categoria</label>
-                    <select id="trans-category" required>
-                        <optgroup label="Gastos" id="expense-categories">
-                            <option value="Alimentacion">Alimentacion</option>
-                            <option value="Transporte">Transporte</option>
-                            <option value="Vivienda">Vivienda</option>
-                            <option value="Servicios">Servicios</option>
-                            <option value="Salud">Salud</option>
-                            <option value="Educacion">Educacion</option>
-                            <option value="Entretenimiento">Entretenimiento</option>
-                            <option value="Ropa">Ropa</option>
-                            <option value="Ahorro">Ahorro</option>
-                            <option value="Otros Gastos">Otros Gastos</option>
-                        </optgroup>
-                        <optgroup label="Ingresos" id="income-categories">
-                            <option value="Salario">Salario</option>
-                            <option value="Freelance">Freelance</option>
-                            <option value="Inversiones">Inversiones</option>
-                            <option value="Ventas">Ventas</option>
-                            <option value="Otros Ingresos">Otros Ingresos</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="trans-date">Fecha</label>
-                    <input type="date" id="trans-date" required>
-                </div>
-                <div class="form-group">
-                    <label for="trans-description">Descripcion (opcional)</label>
-                    <input type="text" id="trans-description" placeholder="Ej: Supermercado, Uber..." maxlength="100">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary btn-cancel-modal">Cancelar</button>
-                    <button type="submit" class="btn-primary">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div id="modal-budget" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Nuevo Presupuesto</h2>
-                <button class="btn-close-modal">&times;</button>
-            </div>
-            <form id="form-budget">
-                <input type="hidden" id="budget-id" value="">
-                <div class="form-group">
-                    <label for="budget-category">Categoria</label>
-                    <select id="budget-category" required>
-                        <option value="Alimentacion">Alimentacion</option>
-                        <option value="Transporte">Transporte</option>
-                        <option value="Vivienda">Vivienda</option>
-                        <option value="Servicios">Servicios</option>
-                        <option value="Salud">Salud</option>
-                        <option value="Educacion">Educacion</option>
-                        <option value="Entretenimiento">Entretenimiento</option>
-                        <option value="Ropa">Ropa</option>
-                        <option value="Ahorro">Ahorro</option>
-                        <option value="Otros Gastos">Otros Gastos</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="budget-amount">Limite Mensual</label>
-                    <input type="number" id="budget-amount" step="0.01" min="1" placeholder="0.00" required inputmode="decimal">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary btn-cancel-modal">Cancelar</button>
-                    <button type="submit" class="btn-primary">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div id="modal-settings" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Configuracion</h2>
-                <button class="btn-close-modal">&times;</button>
-            </div>
-            <div class="settings-list">
-                <div class="setting-item">
-                    <span>Moneda</span>
-                    <select id="setting-currency">
-                        <option value="S/. ">S/. (Soles)</option>
-                        <option value="$ ">$ (Dolar USD)</option>
-                        <option value="&euro; ">&euro; (Euro)</option>
-                    </select>
-                </div>
-                <div class="setting-item">
-                    <span>Tema</span>
-                    <select id="setting-theme">
-                        <option value="dark">Oscuro</option>
-                        <option value="light">Claro</option>
-                    </select>
-                </div>
-                <div class="setting-item danger">
-                    <button id="btn-clear-data" class="btn-danger">Borrar Todos los Datos</button>
-                </div>
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle-btn active" data-type="expense">Gasto</button>
+                            <button type="button" class="toggle-btn" data-type="income">Ingreso</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Monto</label>
+                        <input type="number" id="trans-amount" step="0.01" min="0.01" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="trans-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" id="trans-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripcion (opcional)</label>
+                        <input type="text" id="trans-description" placeholder="Ej: Almuerzo en restaurante" maxlength="100">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary btn-cancel-modal">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar</button>
+                    </div>
+                </form>
             </div>
         </div>
+
+        <!-- MODAL: BUDGET -->
+        <div id="modal-budget" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Presupuesto</h2>
+                    <button class="btn-close-modal">&times;</button>
+                </div>
+                <form id="form-budget">
+                    <input type="hidden" id="budget-id">
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="budget-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Limite Mensual</label>
+                        <input type="number" id="budget-amount" step="0.01" min="1" required placeholder="0.00">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary btn-cancel-modal">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: SETTINGS -->
+        <div id="modal-settings" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Configuracion</h2>
+                    <button class="btn-close-modal">&times;</button>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <span>Moneda</span>
+                        <select id="setting-currency">
+                            <option value="S/. ">S/. (Soles)</option>
+                            <option value="$ ">$ (Dolar USD)</option>
+                            <option value="&euro; ">&euro; (Euro)</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <span>Tema</span>
+                        <select id="setting-theme">
+                            <option value="dark">Oscuro</option>
+                            <option value="light">Claro</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <span>Categorias</span>
+                        <button id="btn-manage-categories" class="btn-sm btn-edit">Gestionar</button>
+                    </div>
+                    <div class="settings-section-title">Seguridad</div>
+                    <div class="setting-item">
+                        <span>Bloqueo con PIN</span>
+                        <label class="switch"><input type="checkbox" id="setting-pin-toggle"><span class="slider"></span></label>
+                    </div>
+                    <div id="security-options" class="hidden">
+                        <div class="setting-item">
+                            <span>Cambiar PIN</span>
+                            <button id="btn-change-pin" class="btn-sm btn-edit">Cambiar</button>
+                        </div>
+                        <div class="setting-item">
+                            <span>Pregunta de seguridad</span>
+                            <button id="btn-setup-security-q" class="btn-sm btn-edit">Configurar</button>
+                        </div>
+                        <div class="setting-item">
+                            <span>Biometria (Face ID)</span>
+                            <label class="switch"><input type="checkbox" id="setting-bio-toggle"><span class="slider"></span></label>
+                        </div>
+                    </div>
+                    <div class="setting-item danger">
+                        <button id="btn-clear-data" class="btn-danger">Borrar Todos los Datos</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: CATEGORIES MANAGER -->
+        <div id="modal-categories" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Categorias</h2>
+                    <button class="btn-close-modal">&times;</button>
+                </div>
+                <div class="cat-tabs">
+                    <button class="cat-tab active" data-cat-type="expense">Gastos</button>
+                    <button class="cat-tab" data-cat-type="income">Ingresos</button>
+                </div>
+                <div id="categories-list" class="categories-list"></div>
+                <button id="btn-add-category" class="btn-primary btn-full" style="margin-top:16px">+ Nueva Categoria</button>
+            </div>
+        </div>
+
+        <!-- MODAL: CATEGORY FORM -->
+        <div id="modal-category-form" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-cat-title">Nueva Categoria</h2>
+                    <button class="btn-close-modal">&times;</button>
+                </div>
+                <form id="form-category">
+                    <input type="hidden" id="cat-id">
+                    <input type="hidden" id="cat-type-val" value="expense">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="cat-name" required placeholder="Ej: Mascotas" maxlength="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Icono</label>
+                        <div class="emoji-grid" id="emoji-grid"></div>
+                    </div>
+                    <input type="hidden" id="cat-icon" value="">
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary btn-cancel-modal">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: SETUP PIN -->
+        <div id="modal-setup-pin" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="setup-pin-title">Crear PIN</h2>
+                    <button class="btn-close-modal">&times;</button>
+                </div>
+                <p id="setup-pin-msg" class="setup-pin-msg">Ingresa un PIN de 4 digitos</p>
+                <div class="pin-dots pin-dots-setup" id="setup-pin-dots">
+                    <span class="pin-dot"></span><span class="pin-dot"></span>
+                    <span class="pin-dot"></span><span class="pin-dot"></span>
+                </div>
+                <div class="pin-pad pin-pad-setup">
+                    <button type="button" class="pin-key" data-setup-digit="1">1</button>
+                    <button type="button" class="pin-key" data-setup-digit="2">2</button>
+                    <button type="button" class="pin-key" data-setup-digit="3">3</button>
+                    <button type="button" class="pin-key" data-setup-digit="4">4</button>
+                    <button type="button" class="pin-key" data-setup-digit="5">5</button>
+                    <button type="button" class="pin-key" data-setup-digit="6">6</button>
+                    <button type="button" class="pin-key" data-setup-digit="7">7</button>
+                    <button type="button" class="pin-key" data-setup-digit="8">8</button>
+                    <button type="button" class="pin-key" data-setup-digit="9">9</button>
+                    <button type="button" class="pin-key" disabled></button>
+                    <button type="button" class="pin-key" data-setup-digit="0">0</button>
+                    <button type="button" class="pin-key pin-key-del" id="btn-setup-pin-del">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 4H8l-7 8 7 8h13a2 2 0 002-2V6a2 2 0 00-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: SECURITY QUESTION -->
+        <div id="modal-security-q" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Pregunta de Seguridad</h2>
+                    <button class="btn-close-modal">&times;</button>
+                </div>
+                <form id="form-security-q">
+                    <div class="form-group">
+                        <label>Pregunta</label>
+                        <select id="security-question">
+                            <option value="mascota">Nombre de tu primera mascota</option>
+                            <option value="ciudad">Ciudad donde naciste</option>
+                            <option value="madre">Segundo nombre de tu madre</option>
+                            <option value="escuela">Nombre de tu primera escuela</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Respuesta</label>
+                        <input type="text" id="security-answer" required placeholder="Tu respuesta" maxlength="50">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary btn-cancel-modal">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: FORGOT PIN -->
+        <div id="modal-forgot-pin" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Recuperar Acceso</h2>
+                    <button class="btn-close-modal-lock">&times;</button>
+                </div>
+                <form id="form-forgot-pin">
+                    <p id="forgot-question-text" style="margin-bottom:16px;color:var(--text-secondary)"></p>
+                    <div class="form-group">
+                        <label>Tu respuesta</label>
+                        <input type="text" id="forgot-answer" required placeholder="Respuesta">
+                    </div>
+                    <p id="forgot-error" class="lock-error hidden">Respuesta incorrecta</p>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary btn-close-modal-lock">Cancelar</button>
+                        <button type="submit" class="btn-primary">Verificar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
     <div id="toast-container" class="toast-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="storage.js"></script>
     <script src="app.js"></script>
     <script src="charts.js"></script>
@@ -282,4 +464,4 @@
         }
     </script>
 </body>
-            </html>
+    </html>
